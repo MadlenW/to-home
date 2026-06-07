@@ -1,6 +1,6 @@
-import { google } from 'googleapis';
+const { google } = require('googleapis');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -24,15 +24,13 @@ export default async function handler(req, res) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    const timestamp = new Date().toISOString();
-
     await sheets.spreadsheets.values.append({
       spreadsheetId: '1g93LOdEsbJiaNqeOlVjc8ayFuK8vsVNtgqAH0MpL3Eo',
       range: 'Sheet1!A:G',
       valueInputOption: 'RAW',
       requestBody: {
         values: [[
-          timestamp,
+          new Date().toISOString(),
           email,
           postal || '',
           city || '',
@@ -47,6 +45,6 @@ export default async function handler(req, res) {
 
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Something went wrong' });
+    return res.status(500).json({ error: err.message });
   }
-}
+};
