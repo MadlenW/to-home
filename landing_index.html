@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%;
+    background: #080808;
+    font-family: 'Mulish', sans-serif;
+    overflow: hidden;
+    cursor: none;
+  }
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+  .cursor {
+    position: fixed;
+    width: 5px; height: 5px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 200;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s ease;
+  }
+  .page {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .nav {
+    padding: 32px 44px 0;
+  }
+  .nav-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.9);
+  }
+  .nav-sub {
+    font-size: 10px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.28);
+    margin-top: 4px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .nav-intro {
+    margin-top: 18px;
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.32);
+    line-height: 1.85;
+    letter-spacing: 0.03em;
+  }
+  .doors-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 56px;
+    padding: 0 44px 32px;
+  }
+  .door-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: none;
+    position: relative;
+    text-decoration: none;
+  }
+  .door-scene {
+    width: 120px;
+    height: 228px;
+    position: relative;
+    perspective: 500px;
+  }
+  .door-frame-outline {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.28s ease;
+  }
+  .door-unit:hover .door-frame-outline { opacity: 1; }
+  .door-behind {
+    position: absolute;
+    inset: 0;
+    background: #F5F2ED;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 20px;
+    opacity: 0;
+    transition: opacity 0.18s ease 0.42s;
+    z-index: 1;
+  }
+  .door-unit:hover .door-behind { opacity: 1; }
+  .door-panel {
+    position: absolute;
+    inset: 0;
+    background: #0e0e0e;
+    transform-origin: left center;
+    will-change: transform;
+    z-index: 3;
+    backface-visibility: hidden;
+    opacity: 0;
+    transition: transform 0.72s cubic-bezier(0.4,0,0.15,1), opacity 0.28s ease;
+  }
+  .door-unit:hover .door-panel {
+    transform: perspective(500px) rotateY(-88deg);
+    opacity: 1;
+  }
+  .handle-wrap {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .handle-bar {
+    width: 1px;
+    height: 18px;
+    background: rgba(255,255,255,0.18);
+  }
+  .handle-knob {
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.22);
+  }
+  .door-name {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    line-height: 1;
+  }
+  .door-desc {
+    font-size: 10px;
+    font-weight: 300;
+    color: #666;
+    line-height: 1.75;
+    letter-spacing: 0.01em;
+  }
+  .door-hint {
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.14);
+    white-space: nowrap;
+    transition: opacity 0.25s ease;
+  }
+  .door-unit:hover .door-hint { opacity: 0; }
+  .footer {
+    padding: 0 44px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .footer-note {
+    font-size: 9px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.13);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+<div class="cursor" id="cursor"></div>
+
+<div class="page">
+  <div class="nav">
+    <div class="nav-title">To Home,</div>
+    <div class="nav-sub">A Design Methodology for Domestic Practice</div>
+    <div class="nav-intro">
+      Home is not a place.<br>
+      It is something you do.<br>
+      Three doors. Choose one.
+    </div>
+  </div>
+
+  <div class="doors-wrap">
+
+    <a class="door-unit" href="/letters">
+      <div class="door-scene">
+        <svg class="door-frame-outline" viewBox="0 0 120 228" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 227 L1 1 L119 1 L119 227 L1 227" stroke="rgba(255,255,255,0.52)" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="door-behind">
+          <div class="door-name">Letters</div>
+          <div class="door-desc">Five weekly exercises. One dimension of homing at a time.</div>
+        </div>
+        <div class="door-panel">
+          <div class="handle-wrap">
+            <div class="handle-bar"></div>
+            <div class="handle-knob"></div>
+          </div>
+        </div>
+      </div>
+      <div class="door-hint">Letters</div>
+    </a>
+
+    <a class="door-unit" href="/cards">
+      <div class="door-scene">
+        <svg class="door-frame-outline" viewBox="0 0 120 228" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 227 L1 1 L119 1 L119 227 L1 227" stroke="rgba(255,255,255,0.52)" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="door-behind">
+          <div class="door-name">Cards</div>
+          <div class="door-desc">27 questions about how you inhabit. Download, print, use anywhere.</div>
+        </div>
+        <div class="door-panel">
+          <div class="handle-wrap">
+            <div class="handle-bar"></div>
+            <div class="handle-knob"></div>
+          </div>
+        </div>
+      </div>
+      <div class="door-hint">Cards</div>
+    </a>
+
+    <a class="door-unit" href="https://to-home-archive.vercel.app" target="_blank" rel="noopener">
+      <div class="door-scene">
+        <svg class="door-frame-outline" viewBox="0 0 120 228" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 227 L1 1 L119 1 L119 227 L1 227" stroke="rgba(255,255,255,0.52)" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="door-behind">
+          <div class="door-name">Archive</div>
+          <div class="door-desc">A collective record of domestic practice. Leave something. Find something.</div>
+        </div>
+        <div class="door-panel">
+          <div class="handle-wrap">
+            <div class="handle-bar"></div>
+            <div class="handle-knob"></div>
+          </div>
+        </div>
+      </div>
+      <div class="door-hint">Archive</div>
+    </a>
+
+  </div>
+
+  <div class="footer">
+    <div class="footer-note">tohome.org</div>
+    <div class="footer-note">2026</div>
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const cursor = document.getElementById('cursor');
+  let mouse = { x: -1000, y: -1000 };
+  let W, H, dots = [];
+  const SPACING = 20;
+  const INFLUENCE = 115;
+  const FORCE = 0.14;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    dots = [];
+    for (let x = SPACING; x < W; x += SPACING)
+      for (let y = SPACING; y < H; y += SPACING)
+        dots.push({ ox: x, oy: y, x, y, vx: 0, vy: 0 });
+  }
+
+  document.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    dots.forEach(d => {
+      const dx = mouse.x - d.ox;
+      const dy = mouse.y - d.oy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < INFLUENCE) {
+        const s = (1 - dist / INFLUENCE) * FORCE;
+        d.vx += dx * s;
+        d.vy += dy * s;
+      }
+      d.vx *= 0.84;
+      d.vy *= 0.84;
+      d.x = d.ox + d.vx;
+      d.y = d.oy + d.vy;
+      const prox = Math.max(0, 1 - dist / INFLUENCE);
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, 1 + prox * 0.85, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${0.09 + prox * 0.5})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+</script>
+</body>
+</html>
