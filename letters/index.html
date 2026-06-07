@@ -1,11 +1,424 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Letters — To Home</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To Home â Letters</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; min-height: 100vh;
+    background: #faf9f7;
+    font-family: 'Mulish', sans-serif;
+    cursor: none;
+  }
+  .cursor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s ease;
+  }
+  .cursor svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #1a1a1a;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .back {
+    position: fixed;
+    top: 32px;
+    left: 44px;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #999;
+    text-decoration: none;
+    z-index: 10;
+    transition: color 0.2s ease;
+  }
+  .back:hover { color: #1a1a1a; }
+  .page {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 120px 44px 80px;
+  }
+  .eyebrow {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #1a1a1a;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .intro {
+    font-size: 13px;
+    font-weight: 300;
+    color: #777;
+    line-height: 1.85;
+    letter-spacing: 0.01em;
+    margin-bottom: 48px;
+  }
+  .modules {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 48px;
+    border-top: 1px solid #e8e5e0;
+  }
+  .module {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid #e8e5e0;
+  }
+  .module-num {
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    color: #ccc;
+    min-width: 20px;
+  }
+  .module-name {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #888;
+  }
+  .module-desc {
+    font-size: 11px;
+    font-weight: 300;
+    color: #aaa;
+    margin-left: auto;
+    text-align: right;
+  }
+  .form-section { position: relative; }
+  .field {
+    margin-bottom: 20px;
+  }
+  .field label {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 8px;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    font-family: 'Mulish', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: #1a1a1a;
+    outline: none;
+    transition: border-color 0.2s ease;
+    cursor: none;
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+  .field input::placeholder { color: #ccc; }
+  .field input:focus, .field select:focus { border-bottom-color: #1a1a1a; }
+  .field select { color: #ccc; }
+  .field select.filled { color: #1a1a1a; }
+  .optional-tag {
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    color: #ccc;
+    margin-left: 6px;
+    text-transform: uppercase;
+  }
+  .second-step {
+    display: none;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .second-step.visible {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .second-step.animating {
+    display: block;
+  }
+  .divider {
+    margin: 32px 0 24px;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #ccc;
+  }
+  .consent-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .consent-row input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: none;
+    accent-color: #1a1a1a;
+  }
+  .consent-row label {
+    font-size: 11px;
+    font-weight: 300;
+    color: #999;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+  }
+  .consent-sub {
+    font-size: 10px;
+    color: #bbb;
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+  .submit-btn {
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    padding: 14px 32px;
+    font-family: 'Mulish', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.2s ease, transform 0.1s ease;
+  }
+  .submit-btn:hover { background: #333; }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { background: #ccc; }
+  .privacy-note {
+    margin-top: 16px;
+    font-size: 10px;
+    font-weight: 300;
+    color: #bbb;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+  }
+  .success {
+    display: none;
+    padding: 48px 0;
+    text-align: left;
+  }
+  .success h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+  }
+  .success p {
+    font-size: 13px;
+    font-weight: 300;
+    color: #777;
+    line-height: 1.85;
+  }
+  .error-msg {
+    font-size: 11px;
+    color: #c0392b;
+    margin-top: 8px;
+    display: none;
+  }
+</style>
 </head>
 <body>
-  <h1>Letters</h1>
+
+<div class="cursor" id="cursor">
+  <svg viewBox="0 0 24 24">
+    <path d="M12 19L5 12l2-2 4 4V5h2v9l4-4 2 2-7 7z" transform="rotate(-45 12 12)"/>
+    <line x1="2" y1="22" x2="8" y2="16"/>
+  </svg>
+</div>
+
+<a class="back" href="/">&#8592; To Home</a>
+
+<div class="page">
+  <div class="eyebrow">01 &#8212; Letters</div>
+  <h1>Five letters.<br>Five dimensions<br>of homing.</h1>
+  <p class="intro">
+    Over five weeks, one letter arrives at a time. Each one asks you to notice something about how you make a place feel like home &#8212; a ritual, an object, a smell, a person, a corner that is yours. You don't need to prepare. You only need a place you live in.
+  </p>
+
+  <div class="modules">
+    <div class="module">
+      <span class="module-num">01</span>
+      <span class="module-name">Territorializing</span>
+      <span class="module-desc">Claiming space</span>
+    </div>
+    <div class="module">
+      <span class="module-num">02</span>
+      <span class="module-name">Outboxing</span>
+      <span class="module-desc">Objects you carry</span>
+    </div>
+    <div class="module">
+      <span class="module-num">03</span>
+      <span class="module-name">Sensory re-evocation</span>
+      <span class="module-desc">Familiar smells, sounds</span>
+    </div>
+    <div class="module">
+      <span class="module-num">04</span>
+      <span class="module-name">Connecting</span>
+      <span class="module-desc">People across distance</span>
+    </div>
+    <div class="module">
+      <span class="module-num">05</span>
+      <span class="module-name">Bubbling</span>
+      <span class="module-desc">Portable micro-environments</span>
+    </div>
+  </div>
+
+  <div class="form-section" id="formSection">
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="your@email.com" autocomplete="off"/>
+    </div>
+
+    <div class="field">
+      <label>Postal address <span class="optional-tag">optional</span></label>
+      <input type="text" id="postal" placeholder="If you'd like to receive a physical letter"/>
+    </div>
+
+    <div class="second-step" id="secondStep">
+      <div class="divider">A little more, if you'd like</div>
+
+      <div class="field">
+        <label>City <span class="optional-tag">optional</span></label>
+        <input type="text" id="city" placeholder="Where you live now"/>
+      </div>
+
+      <div class="field">
+        <label>How long have you lived there <span class="optional-tag">optional</span></label>
+        <select id="duration" onchange="this.classList.toggle('filled', this.value !== '')">
+          <option value="">Select</option>
+          <option>Less than 3 months</option>
+          <option>3&#8211;12 months</option>
+          <option>1&#8211;3 years</option>
+          <option>3&#8211;10 years</option>
+          <option>More than 10 years</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Rent or own <span class="optional-tag">optional</span></label>
+        <select id="rentOrOwn" onchange="this.classList.toggle('filled', this.value !== '')">
+          <option value="">Select</option>
+          <option>Rent</option>
+          <option>Own</option>
+          <option>Neither / other</option>
+        </select>
+      </div>
+
+      <div class="consent-row">
+        <input type="checkbox" id="archiveConsent"/>
+        <div>
+          <label for="archiveConsent">Add my city and duration anonymously to the collective archive.</label>
+          <div class="consent-sub">Your email and postal address are never shared or stored in the archive. Used only to send you letters.</div>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">Send me the letters</button>
+      <div class="error-msg" id="errorMsg">Something went wrong. Please try again.</div>
+      <p class="privacy-note">Your email is used only to send the five letters. Nothing else. You can unsubscribe at any time by replying to any letter.</p>
+    </div>
+  </div>
+
+  <div class="success" id="success">
+    <h2>Your first letter is on its way.</h2>
+    <p>Check your inbox in the next 24 hours.<br>Five weeks, five letters, five dimensions of home.</p>
+  </div>
+</div>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+
+  const emailInput = document.getElementById('email');
+  const secondStep = document.getElementById('secondStep');
+  let secondVisible = false;
+
+  emailInput.addEventListener('blur', () => {
+    if (emailInput.value.includes('@') && !secondVisible) {
+      secondVisible = true;
+      secondStep.classList.add('animating');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          secondStep.classList.add('visible');
+        });
+      });
+    }
+  });
+
+  async function handleSubmit() {
+    const btn = document.getElementById('submitBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const email = emailInput.value.trim();
+
+    if (!email || !email.includes('@')) {
+      emailInput.focus();
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    errorMsg.style.display = 'none';
+
+    const payload = {
+      email,
+      postal: document.getElementById('postal').value.trim(),
+      city: document.getElementById('city').value.trim(),
+      duration: document.getElementById('duration').value,
+      rentOrOwn: document.getElementById('rentOrOwn').value,
+      archiveConsent: document.getElementById('archiveConsent').checked ? 'yes' : 'no'
+    };
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        document.getElementById('formSection').style.display = 'none';
+        const success = document.getElementById('success');
+        success.style.display = 'block';
+      } else {
+        throw new Error('Failed');
+      }
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Send me the letters';
+      errorMsg.style.display = 'block';
+    }
+  }
+</script>
 </body>
 </html>
