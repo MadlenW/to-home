@@ -1,11 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cards — To Home</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To Home — Cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; min-height: 100vh;
+    background: #faf9f7;
+    font-family: 'Mulish', sans-serif;
+    cursor: none;
+  }
+  .cursor {
+    position: fixed;
+    width: 6px; height: 6px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 100;
+    transform: translate(-50%, -50%);
+  }
+  .back {
+    position: fixed;
+    top: 32px;
+    left: 44px;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #999;
+    text-decoration: none;
+    z-index: 10;
+    transition: color 0.2s ease;
+  }
+  .back:hover { color: #1a1a1a; }
+  .page {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 120px 44px 80px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #1a1a1a;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .intro {
+    font-size: 13px;
+    font-weight: 300;
+    color: #777;
+    line-height: 1.85;
+    letter-spacing: 0.01em;
+    margin-bottom: 48px;
+  }
+  .download-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #1a1a1a;
+    color: #fff;
+    text-decoration: none;
+    padding: 14px 28px;
+    font-family: 'Mulish', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.2s ease;
+    width: fit-content;
+  }
+  .download-btn:hover { background: #333; }
+  .download-btn svg {
+    width: 14px;
+    height: 14px;
+    stroke: #fff;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+  .print-note {
+    font-size: 10px;
+    font-weight: 300;
+    color: #bbb;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+    max-width: 360px;
+  }
+</style>
 </head>
 <body>
-  <h1>Cards</h1>
+
+<div class="cursor" id="cursor"></div>
+<a class="back" href="/">← To Home</a>
+
+<div class="page">
+  <h1>Conversations<br>Towards Home</h1>
+  <p class="intro">
+    The card set is a tool for conversation and reflection. Organised across three temporal decks: Past, Present and Future. The questions invite you to map how your relationship to home has been shaped, what it looks like now, and what you might still be reaching for. Use them alone or with others, in any order, at any pace.
+  </p>
+
+  <div class="download-section">
+    <a class="download-btn" href="/cards.pdf" download="to-home-cards.pdf">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 3v13M7 11l5 5 5-5M5 20h14"/>
+      </svg>
+      Download print file
+    </a>
+    <p class="print-note">
+      A4 format. Print double-sided on 300gsm cardstock, flip on the long edge. Cut along the crop marks. A home printer works fine.
+    </p>
+  </div>
+</div>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+</script>
 </body>
 </html>
